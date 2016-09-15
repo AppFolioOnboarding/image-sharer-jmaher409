@@ -45,6 +45,7 @@ group :production do
 end
 
 group :test do
+  gem 'ae_page_objects'
   gem 'capybara'
   gem 'mocha'
   gem 'selenium-webdriver'

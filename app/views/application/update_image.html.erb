@@ -1,0 +1,8 @@
+<body>
+  <h1>Add an Image</h1>
+  <%= form_with(url: "/images", method: "POST") do %>
+    <%= label_tag(:url, "Image URL:") %>
+    <%= text_field_tag(:url) %>
+    <%= submit_tag("Submit") %>
+  <% end %>
+</body>

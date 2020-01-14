@@ -1,1 +1,22 @@
 <h1>New Image</h1>
+
+<%= form_with scope: :image, url: images_path, local: true do |form| %>
+  <p class='url_form_paragraph'>
+    <%= form.label :url, class: 'url_label' %>
+    <%= form.text_field :url, class: 'url_input'%>
+    <% if @image and @image.errors and @image.errors.any? %>
+      <div id="url_error_message">
+        <span>Failed to save image:</span>
+        <ul>
+          <% @image.errors.full_messages.each_with_index do |msg, idx| %>
+            <li id="<%= 'url_error_' + idx.to_s%>"><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </p>
+
+  <p>
+    <%= form.submit %>
+  </p>
+<% end %>

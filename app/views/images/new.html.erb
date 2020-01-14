@@ -1,11 +1,7 @@
 <body>
-  <% flash.each do |name, msg| -%>
-    <%= content_tag :div, msg, class: name %>
-  <% end -%>
-  <h1>Add an Image</h1>
-  <%= form_with(url: "/images", method: "POST") do %>
-    <%= label_tag(:url, "Image URL:") %>
-    <%= text_field_tag(:url) %>
-    <%= submit_tag("Submit") %>
+<h1>Add an Image</h1>
+  <%= form_with scope: :image, local: true, url: images_path do |f| %>
+    Image Url: <%= f.text_field :url %>
+    <%= f.submit %>
   <% end %>
 </body>

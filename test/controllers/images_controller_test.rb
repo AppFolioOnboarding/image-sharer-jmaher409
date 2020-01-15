@@ -10,4 +10,8 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
     assert_select '#url_error_message', 1
     assert_select '#url_error_0', count: 1, text: 'Url invalid'
   end
+
+  test 'shows index of images' do
+
+  end
 end

@@ -1,6 +1,10 @@
 class ImagesController < ApplicationController
   def new; end
 
+  def index
+    @images = Image.all
+  end
+
   def create
     @image = Image.new(params.require(:image).permit(:url))
     if @image.save

@@ -1,0 +1,20 @@
+// Place all the styles related to the Images controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+$error-color: red;
+
+
+.field_with_errors {
+  display: inline-block;
+  .url_label {
+    color: $error-color;
+  }
+  .url_input {
+    border-color: $error-color;
+  }
+}
+
+#url_error_message {
+  color: $error-color;
+}

@@ -27,6 +27,8 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to image_path(Image.last.id)
+
+    assert_equal 'Image saved successfully.', flash[:notice]
   end
 
   test '.show shows an image' do

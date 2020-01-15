@@ -6,7 +6,7 @@ class ImagesController < ApplicationController
   def create
     @image = Image.new(params.require(:image).permit(:url))
     if @image.save
-      redirect_to @image
+      redirect_to @image, notice: 'Image saved successfully.'
     else
       render 'new', status: :unprocessable_entity
     end

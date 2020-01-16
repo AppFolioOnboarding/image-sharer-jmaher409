@@ -3,6 +3,11 @@ class ImagesController < ApplicationController
     @image = Image.new
   end
 
+  def index
+    @images = Image.all
+    @view_model = ImagesView.new(@images)
+  end
+
   def create
     @image = Image.new(params.require(:image).permit(:url))
     if @image.save

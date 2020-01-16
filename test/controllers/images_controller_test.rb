@@ -50,4 +50,37 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
   end
+
+  test '.index does not show images section if there are none' do
+    get images_url
+
+    assert_response :ok
+
+    assert_select 'img', 0
+  end
+
+  test '.index shows images sorted from newest to oldest' do
+    test_urls = [
+      'https://www.google.com/sample1.jpg',
+      'https://www.google.com/sample2.jpg',
+      'https://www.google.com/sample3.jpg'
+    ]
+
+    view_model_mock = mock
+    ImagesView.expects(:new).returns(view_model_mock)
+    view_model_mock.expects(:sort_images).returns(test_urls.reverse)
+
+    get images_url
+
+    assert_response :ok
+
+    assert_select 'img' do |elements|
+      assert(elements.all? { |e| e.attributes['class'].value.include? 'index_image' })
+      img_tag_srcs = elements.map { |e| e.attributes['src'].value }
+      assert_equal test_urls.reverse, img_tag_srcs
+    end
+
+    ImagesView.unstub(:new)
+    view_model_mock.unstub(:sort_images)
+  end
 end

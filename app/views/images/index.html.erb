@@ -1,0 +1,11 @@
+<h1>Image Library</h1>
+
+<%= link_to 'New image', new_image_path %>
+
+<table>
+  <% @view_model.sort_images.each do |url| %>
+    <tr>
+      <td><%= image_tag(url, class: 'index_image') %></td>
+    </tr>
+  <% end %>
+</table>

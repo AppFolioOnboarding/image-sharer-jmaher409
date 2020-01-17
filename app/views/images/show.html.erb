@@ -7,5 +7,14 @@
     <% end %>
   </div>
 
+  <div id="image_tags">
+    <h4>Tags</h4>
+    <ul>
+      <% @image.tag_list.each_with_index do |tag, index| %>
+        <li id="line_item_<%= index %>"><%= tag %></li>
+      <% end %>
+    </ul>
+  </div>
+
   <%= image_tag(@image.url) %>
 </body>

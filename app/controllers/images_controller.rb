@@ -4,8 +4,7 @@ class ImagesController < ApplicationController
   end
 
   def index
-    @images = Image.all
-    @view_model = ImagesView.new(@images)
+    @view_model = ImagesView.new
   end
 
   def create

@@ -1,9 +1,7 @@
 class ImagesView
-  def initialize(images)
-    @images = images
-  end
+  def initialize; end
 
-  def sort_images
-    @images.sort_by(&:created_at).reverse!.map(&:url)
+  def images
+    Image.all.sort_by(&:created_at).reverse!.map(&:url)
   end
 end

@@ -7,6 +7,7 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select 'input[type=url]', 1
     assert_select 'input[type=submit]', 1
+    assert_select '#image_tag_list', 1
   end
 
   test '.create shows error on invalid url' do
@@ -19,7 +20,7 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
     assert_select 'span', 'is not a valid URL'
   end
 
-  test '.create creates an image record' do
+  test '.create creates an image record with no tags if no tags given' do
     test_url = 'https://www.google.com'
 
     assert_difference 'Image.count' do
@@ -29,6 +30,26 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to image_path(Image.last.id)
 
     assert_equal 'Image saved successfully.', flash[:notice]
+
+    image = Image.find_by(id: Image.last.id)
+
+    assert_equal [], image.tag_list
+  end
+
+  test '.create creates an image record with tags if tags given' do
+    test_url = 'https://www.google.com'
+
+    assert_difference 'Image.count' do
+      post images_path, params: { image: { url: test_url, tag_list: 'foo, bar' } }
+    end
+
+    assert_redirected_to image_path(Image.last.id)
+
+    assert_equal 'Image saved successfully.', flash[:notice]
+
+    image = Image.find_by(id: Image.last.id)
+
+    assert_equal %w[foo bar], image.tag_list
   end
 
   test '.show shows an image' do
@@ -49,6 +70,38 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
     follow_redirect!
 
     assert_response :success
+  end
+
+  test '.show on an image without tags does not show tags' do
+    test_url = 'http://www.google.com'
+    Image.create!(url: test_url)
+
+    get image_path(Image.last.id)
+
+    assert_response :ok
+
+    assert_select '#image_tags' do
+      assert_select 'h4', text: 'Tags'
+      assert_select 'li', 0
+    end
+  end
+
+  test '.show on an image with tags shows tags' do
+    test_url = 'http://www.google.com'
+    Image.create!(url: test_url)
+    image = Image.find_by(id: Image.last.id)
+    image.tag_list.add('foo', 'bar')
+    image.save
+
+    get image_path(Image.last.id)
+
+    assert_response :ok
+
+    assert_select '#image_tags' do
+      assert_select 'h4', text: 'Tags'
+      assert_select '#line_item_0', text: 'foo'
+      assert_select '#line_item_1', text: 'bar'
+    end
   end
 
   test '.index does not show images section if there are none' do

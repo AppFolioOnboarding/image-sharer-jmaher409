@@ -10,6 +10,9 @@ class ImagesController < ApplicationController
 
   def create
     @image = Image.new(params.require(:image).permit(:url))
+    tag_list = params.require(:image).permit(:tag_list)[:tag_list]
+    @image.tag_list.add(tag_list, parse: true)
+
     if @image.save
       redirect_to @image, notice: 'Image saved successfully.'
     else

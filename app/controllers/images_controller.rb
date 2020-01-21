@@ -28,6 +28,17 @@ class ImagesController < ApplicationController
     redirect_to new_image_path if @image.nil?
   end
 
+  def destroy
+    @image = Image.find_by delete_params
+
+    if @image
+      @image.destroy
+      flash[:success] = 'You have successfully deleted the image.'
+    end
+
+    redirect_to images_path
+  end
+
   private
 
   def create_params
@@ -36,5 +47,9 @@ class ImagesController < ApplicationController
 
   def index_params
     params.permit(:tag)
+  end
+
+  def delete_params
+    params.permit(:id)
   end
 end

@@ -3,8 +3,13 @@
 
   <%= render partial: "flash" %>
 
+  <%= link_to 'Go back to index', images_path, id: 'back_to_index' %>
+
   <div>
-    <%= link_to 'Go back to index', images_path, id: 'back_to_index' %>
+    <%= link_to 'Delete Image', image_path(@image),	
+            id: "delete_link",
+            method: :delete,
+            data: { confirm: 'Are you sure?' } %>
   </div>
 
   <div id="image_tags">
@@ -15,6 +20,7 @@
       <% end %>
     </ul>
   </div>
+
 
   <%= image_tag(@image.url) %>
 </body>

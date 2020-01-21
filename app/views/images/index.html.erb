@@ -2,7 +2,12 @@
 
 <%= link_to 'New image', new_image_path %>
 
-<table>
+<table border="1">
+  <tr>
+    <th>Image</th>
+    <th>Show</th>
+    <th>Tags</th>
+  </tr>
   <% @view_model.images.each do |image| %>
     <tr>
       <td><%= image_tag(image.url, class: 'index_image') %></td>

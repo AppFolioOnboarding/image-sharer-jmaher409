@@ -55,13 +55,14 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
     assert_equal %w[foo bar], image.tag_list
   end
 
-  test '.show shows an image' do
+  test '.show shows an image and has delete link' do
     test_url = 'http://www.google.com'
     Image.create!(url: test_url)
 
     get image_path(Image.last.id)
 
     assert_response :ok
+    assert_select 'a', text: 'Delete Image'
     assert_select 'img', 1 do
       assert_select '[src=?]', test_url
     end
@@ -163,6 +164,21 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
     ImagesView.unstub(:new)
     view_model_mock.unstub(:images)
     view_model_mock.unstub(:tags)
+  end
+
+  test '.destroy' do
+    test_url = 'http://www.google.com'
+
+    Image.create!(url: test_url)
+    id = Image.last.id
+    created_image = Image.find_by(id: id)
+    assert_not created_image.nil?
+
+    delete image_path(id)
+    assert_response 302
+
+    created_image = Image.find_by(id: id)
+    assert created_image.nil?
   end
 end
 

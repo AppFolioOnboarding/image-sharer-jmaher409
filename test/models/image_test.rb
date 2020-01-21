@@ -28,3 +28,4 @@ class ImageTest < ActiveSupport::TestCase
     assert_equal %w[foo bar], image.tag_list
   end
 end
+

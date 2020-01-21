@@ -27,6 +27,13 @@ class ImagesController < ApplicationController
     redirect_to new_image_path if @image.nil?
   end
 
+  def destroy
+    @image = Image.find_by id: params[:id]
+    @image.destroy
+
+    redirect_to images_path
+  end
+
   private
 
   def create_params

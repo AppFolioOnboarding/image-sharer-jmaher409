@@ -1,6 +1,6 @@
 require 'test_helper'
 
-SAVE_SUCCESSFUL_MESSAGE='You have successfully added an image.'
+SAVE_SUCCESSFUL_MESSAGE = 'You have successfully added an image.'.freeze
 
 # rubocop:disable Metrics/ClassLength
 class ImagesControllerTest < ActionDispatch::IntegrationTest
@@ -18,9 +18,9 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
       post images_path, params: { image: { url: 'foo' } }
     end
 
-    assert_response :unprocessable_entity
+    assert_response :ok
 
-    assert_select 'span', 'is not a valid URL'
+    assert_select 'span', 'must be a valid URL'
   end
 
   test '.create creates an image record with no tags if no tags given' do
@@ -32,7 +32,7 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to image_path(Image.last.id)
 
-    assert_equal SAVE_SUCCESSFUL_MESSAGE, flash[:notice]
+    assert_equal SAVE_SUCCESSFUL_MESSAGE, flash[:success]
 
     image = Image.find_by(id: Image.last.id)
 
@@ -48,20 +48,21 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to image_path(Image.last.id)
 
-    assert_equal SAVE_SUCCESSFUL_MESSAGE, flash[:notice]
+    assert_equal SAVE_SUCCESSFUL_MESSAGE, flash[:success]
 
     image = Image.find_by(id: Image.last.id)
 
     assert_equal %w[foo bar], image.tag_list
   end
 
-  test '.show shows an image' do
+  test '.show shows an image and has delete link' do
     test_url = 'http://www.google.com'
     Image.create!(url: test_url)
 
     get image_path(Image.last.id)
 
     assert_response :ok
+    assert_select 'a', text: 'Delete Image'
     assert_select 'img', 1 do
       assert_select '[src=?]', test_url
     end
@@ -140,7 +141,7 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
     assert_response :ok
 
     assert_select 'img' do |elements|
-      assert(elements.all? { |e| e.attributes['class'].value.include? 'index_image' })
+      assert(elements.all? { |e| e.attributes['class'].value.include? 'index-image' })
       img_tag_srcs = elements.map { |e| e.attributes['src'].value }
       assert_equal test_images.reverse.map(&:url), img_tag_srcs
     end
@@ -163,6 +164,21 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
     ImagesView.unstub(:new)
     view_model_mock.unstub(:images)
     view_model_mock.unstub(:tags)
+  end
+
+  test '.destroy' do
+    test_url = 'http://www.google.com'
+
+    Image.create!(url: test_url)
+    id = Image.last.id
+    created_image = Image.find_by(id: id)
+    assert_not created_image.nil?
+
+    delete image_path(id)
+    assert_response 302
+
+    created_image = Image.find_by(id: id)
+    assert created_image.nil?
   end
 end
 

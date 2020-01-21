@@ -1,7 +1,17 @@
 <h1>New Image</h1>
 
 <%= simple_form_for @image do |form| %>
-  <%= form.input :url %>
-  <%= form.input :tag_list, input_html: {value: form.object.tag_list.join(",")} %>
-  <%= form.button :submit %>
+  <div class='form-group'>
+    <%= form.input :url, 
+      input_html: { id: 'image_url' }, 
+      error_html: { class: 'help-block' } %>
+  </div>
+  <div class='form-group'>
+    <%= form.input :tag_list, 
+      input_html: {
+        value: form.object.tag_list.join(','), 
+        id: 'image_tag_list' 
+      } %>
+    </div>
+  <%= form.button :submit, id: 'image_submit' %>
 <% end %>

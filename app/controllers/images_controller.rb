@@ -16,15 +16,24 @@ class ImagesController < ApplicationController
     @image.tag_list.add(tag_list, parse: true)
 
     if @image.save
-      redirect_to @image, notice: 'You have successfully added an image.'
+      flash[:success] = 'You have successfully added an image.'
+      redirect_to @image
     else
-      render 'new', status: :unprocessable_entity
+      render :new
     end
   end
 
   def show
     @image = Image.find_by id: params[:id]
     redirect_to new_image_path if @image.nil?
+  end
+
+  def destroy
+    @image = Image.find_by id: params[:id]
+    @image.destroy
+
+    flash[:success] = 'You have successfully deleted the image.'
+    redirect_to images_path
   end
 
   private

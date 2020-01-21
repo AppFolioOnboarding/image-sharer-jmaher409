@@ -2,6 +2,18 @@
 
 <%= link_to 'New image', new_image_path %>
 
+
+<div id="tags_container">
+  <h2>Tags</h2>
+  <ul>
+    <% @view_model.tags.each_with_index do |tag, index| %>
+      <li id="tag_<%= index %>">
+        <%= link_to tag, "#{images_path}?tag=#{tag}"%>
+      </li>
+    <% end %>
+  </ul>
+</div>
+
 <table>
   <% @view_model.images.each do |url| %>
     <tr>

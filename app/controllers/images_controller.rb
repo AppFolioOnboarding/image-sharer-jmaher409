@@ -4,12 +4,15 @@ class ImagesController < ApplicationController
   end
 
   def index
-    @view_model = ImagesView.new
+    @view_model = ImagesView.new(index_params[:tag])
   end
 
   def create
-    @image = Image.new(params.require(:image).permit(:url))
-    tag_list = params.require(:image).permit(:tag_list)[:tag_list]
+    created_params = create_params
+    @image = Image.new(url: created_params[:url])
+
+    tag_list = created_params[:tag_list]
+
     @image.tag_list.add(tag_list, parse: true)
 
     if @image.save
@@ -22,5 +25,15 @@ class ImagesController < ApplicationController
   def show
     @image = Image.find_by id: params[:id]
     redirect_to new_image_path if @image.nil?
+  end
+
+  private
+
+  def create_params
+    params.require(:image).permit(:url, :tag_list)
+  end
+
+  def index_params
+    params.permit(:tag)
   end
 end

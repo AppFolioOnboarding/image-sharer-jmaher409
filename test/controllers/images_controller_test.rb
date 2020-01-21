@@ -1,5 +1,6 @@
 require 'test_helper'
 
+# rubocop:disable Metrics/ClassLength
 class ImagesControllerTest < ActionDispatch::IntegrationTest
   test '.new shows a view for creating an image' do
     get new_image_path
@@ -105,11 +106,19 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test '.index does not show images section if there are none' do
+    view_model_mock = mock
+    ImagesView.expects(:new).returns(view_model_mock)
+    view_model_mock.expects(:images).returns([])
+    view_model_mock.expects(:tags).returns([])
+
     get images_url
 
     assert_response :ok
 
     assert_select 'img', 0
+    ImagesView.unstub(:new)
+    view_model_mock.unstub(:images)
+    view_model_mock.unstub(:tags)
   end
 
   test '.index shows images sorted from newest to oldest' do
@@ -121,7 +130,8 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
 
     view_model_mock = mock
     ImagesView.expects(:new).returns(view_model_mock)
-    view_model_mock.expects(:sort_images).returns(test_urls.reverse)
+    view_model_mock.expects(:images).returns(test_urls.reverse)
+    view_model_mock.expects(:tags).returns([])
 
     get images_url
 
@@ -134,6 +144,54 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
     end
 
     ImagesView.unstub(:new)
-    view_model_mock.unstub(:sort_images)
+    view_model_mock.unstub(:images)
+    view_model_mock.unstub(:tags)
+  end
+
+  test '.index links to index filtered on tag for each available tag' do
+    view_model_mock = mock
+    ImagesView.expects(:new).with(nil).returns(view_model_mock)
+    view_model_mock.expects(:tags).returns(%w[foo bar])
+    view_model_mock.expects(:images).returns([])
+
+    get images_url
+
+    assert_response :ok
+
+    assert_select '#tags_container', 1 do
+      assert_select 'li' do
+        assert_select '#tag_0' do
+          assert_select 'a', text: 'foo' do |link|
+            assert_equal '/images?tag=foo', link.attr('href').to_s
+          end
+        end
+        assert_select '#tag_1' do
+          assert_select 'a', text: 'bar' do |link|
+            assert_equal '/images?tag=bar', link.attr('href').to_s
+          end
+        end
+      end
+    end
+
+    ImagesView.unstub(:new)
+    view_model_mock.unstub(:images)
+    view_model_mock.unstub(:tags)
+  end
+
+  test '.index passes id to images_view on entry' do
+    view_model_mock = mock
+    ImagesView.expects(:new).with('foo').returns(view_model_mock)
+    view_model_mock.expects(:tags).returns([])
+    view_model_mock.expects(:images).returns([])
+
+    get images_path, params: { tag: 'foo' }
+
+    assert_response :ok
+
+    ImagesView.unstub(:new)
+    view_model_mock.unstub(:images)
+    view_model_mock.unstub(:tags)
   end
 end
+
+# rubocop:enable Metrics/ClassLength

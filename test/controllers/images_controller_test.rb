@@ -1,5 +1,7 @@
 require 'test_helper'
 
+SAVE_SUCCESSFUL_MESSAGE='You have successfully added an image.'
+
 # rubocop:disable Metrics/ClassLength
 class ImagesControllerTest < ActionDispatch::IntegrationTest
   test '.new shows a view for creating an image' do
@@ -30,7 +32,7 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to image_path(Image.last.id)
 
-    assert_equal 'Image saved successfully.', flash[:notice]
+    assert_equal SAVE_SUCCESSFUL_MESSAGE, flash[:notice]
 
     image = Image.find_by(id: Image.last.id)
 
@@ -46,7 +48,7 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to image_path(Image.last.id)
 
-    assert_equal 'Image saved successfully.', flash[:notice]
+    assert_equal SAVE_SUCCESSFUL_MESSAGE, flash[:notice]
 
     image = Image.find_by(id: Image.last.id)
 
@@ -122,16 +124,16 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test '.index shows images sorted from newest to oldest' do
-    test_urls = [
-      'https://www.google.com/sample1.jpg',
-      'https://www.google.com/sample2.jpg',
-      'https://www.google.com/sample3.jpg'
+    test_images = [
+      Image.create(url: 'https://www.google.com/sample1.jpg'),
+      Image.create(url: 'https://www.google.com/sample2.jpg'),
+      Image.create(url: 'https://www.google.com/sample3.jpg')
     ]
 
     view_model_mock = mock
     ImagesView.expects(:new).returns(view_model_mock)
-    view_model_mock.expects(:images).returns(test_urls.reverse)
-    view_model_mock.expects(:tags).returns([])
+    view_model_mock.expects(:images).returns(test_images.reverse)
+    view_model_mock.stubs(:image_tags).returns([])
 
     get images_url
 
@@ -140,42 +142,12 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
     assert_select 'img' do |elements|
       assert(elements.all? { |e| e.attributes['class'].value.include? 'index_image' })
       img_tag_srcs = elements.map { |e| e.attributes['src'].value }
-      assert_equal test_urls.reverse, img_tag_srcs
+      assert_equal test_images.reverse.map(&:url), img_tag_srcs
     end
 
     ImagesView.unstub(:new)
     view_model_mock.unstub(:images)
-    view_model_mock.unstub(:tags)
-  end
-
-  test '.index links to index filtered on tag for each available tag' do
-    view_model_mock = mock
-    ImagesView.expects(:new).with(nil).returns(view_model_mock)
-    view_model_mock.expects(:tags).returns(%w[foo bar])
-    view_model_mock.expects(:images).returns([])
-
-    get images_url
-
-    assert_response :ok
-
-    assert_select '#tags_container', 1 do
-      assert_select 'li' do
-        assert_select '#tag_0' do
-          assert_select 'a', text: 'foo' do |link|
-            assert_equal '/images?tag=foo', link.attr('href').to_s
-          end
-        end
-        assert_select '#tag_1' do
-          assert_select 'a', text: 'bar' do |link|
-            assert_equal '/images?tag=bar', link.attr('href').to_s
-          end
-        end
-      end
-    end
-
-    ImagesView.unstub(:new)
-    view_model_mock.unstub(:images)
-    view_model_mock.unstub(:tags)
+    view_model_mock.unstub(:image_tags)
   end
 
   test '.index passes id to images_view on entry' do

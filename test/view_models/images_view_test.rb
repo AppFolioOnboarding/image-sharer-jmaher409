@@ -16,7 +16,7 @@ class ImagesViewTest < ActiveSupport::TestCase
 
     images_view = ImagesView.new(nil)
 
-    assert_equal TEST_URLS.reverse, images_view.images
+    assert_equal TEST_URLS.reverse, images_view.images.map(&:url)
   end
 
   test '.images only returns images with tag if tag is not nil' do
@@ -26,15 +26,15 @@ class ImagesViewTest < ActiveSupport::TestCase
 
     expected_urls = [TEST_URLS[2], TEST_URLS[1]]
 
-    assert_equal expected_urls, images_view.images
+    assert_equal expected_urls, images_view.images.map(&:url)
   end
 
-  test '.tags returns all used tags' do
+  test '.image_tags returns tags for image' do
     setup_test_data_with_tags
 
     images_view = ImagesView.new(nil)
 
-    assert_equal [FIRST_TAG, SECOND_TAG], images_view.tags.map(&:name)
+    assert_equal [SECOND_TAG], images_view.image_tags(Image.find_by(id: Image.last.id))
   end
 
   private

@@ -16,7 +16,7 @@ class ImagesController < ApplicationController
     @image.tag_list.add(tag_list, parse: true)
 
     if @image.save
-      redirect_to @image, notice: 'Image saved successfully.'
+      redirect_to @image, notice: 'You have successfully added an image.'
     else
       render 'new', status: :unprocessable_entity
     end

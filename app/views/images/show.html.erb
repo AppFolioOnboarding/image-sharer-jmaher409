@@ -1,17 +1,17 @@
 <body>
-  <div id="flash_messages">
-    <% flash.each do |_, msg| %>
-      <div>
-        <%= msg %>
-      </div>
-    <% end %>
+  <h1>Image Library</h1>
+
+  <%= render partial: "flash" %>
+
+  <div>
+    <%= link_to 'Go back to index', images_path, id: 'back_to_index' %>
   </div>
 
   <div id="image_tags">
     <h4>Tags</h4>
-    <ul>
+    <ul class="tag-list">
       <% @image.tag_list.each_with_index do |tag, index| %>
-        <li id="line_item_<%= index %>"><%= tag %></li>
+        <li id="line_item_<%= index %>" class='image-tag'><%= tag %></li>
       <% end %>
     </ul>
   </div>

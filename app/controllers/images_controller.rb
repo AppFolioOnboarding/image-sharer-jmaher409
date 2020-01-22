@@ -16,9 +16,10 @@ class ImagesController < ApplicationController
     @image.tag_list.add(tag_list, parse: true)
 
     if @image.save
-      redirect_to @image, notice: 'Image saved successfully.'
+      flash[:success] = 'You have successfully added an image.'
+      redirect_to @image
     else
-      render 'new', status: :unprocessable_entity
+      render :new
     end
   end
 

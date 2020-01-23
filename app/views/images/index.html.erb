@@ -15,8 +15,7 @@
         <%= link_to 'Show image', image_path(image) %>
       </td>
       <td>
-        <h5>Tags:</h5>
-        <ul>
+        <ul class="tag_list">
           <% @view_model.image_tags(image).each_with_index do |tag, index| %>
             <li id="tag_<%= index %>">
               <%= link_to tag, "#{images_path}?tag=#{tag}"%>

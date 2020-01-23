@@ -1,6 +1,6 @@
 require 'test_helper'
 
-SAVE_SUCCESSFUL_MESSAGE='You have successfully added an image.'
+SAVE_SUCCESSFUL_MESSAGE = 'You have successfully added an image.'.freeze
 
 # rubocop:disable Metrics/ClassLength
 class ImagesControllerTest < ActionDispatch::IntegrationTest
@@ -18,9 +18,9 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
       post images_path, params: { image: { url: 'foo' } }
     end
 
-    assert_response :unprocessable_entity
+    assert_response :ok
 
-    assert_select 'span', 'is not a valid URL'
+    assert_select 'span', 'must be a valid URL'
   end
 
   test '.create creates an image record with no tags if no tags given' do
@@ -32,7 +32,7 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to image_path(Image.last.id)
 
-    assert_equal SAVE_SUCCESSFUL_MESSAGE, flash[:notice]
+    assert_equal SAVE_SUCCESSFUL_MESSAGE, flash[:success]
 
     image = Image.find_by(id: Image.last.id)
 
@@ -48,7 +48,7 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to image_path(Image.last.id)
 
-    assert_equal SAVE_SUCCESSFUL_MESSAGE, flash[:notice]
+    assert_equal SAVE_SUCCESSFUL_MESSAGE, flash[:success]
 
     image = Image.find_by(id: Image.last.id)
 
@@ -141,7 +141,7 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
     assert_response :ok
 
     assert_select 'img' do |elements|
-      assert(elements.all? { |e| e.attributes['class'].value.include? 'index_image' })
+      assert(elements.all? { |e| e.attributes['class'].value.include? 'index-image' })
       img_tag_srcs = elements.map { |e| e.attributes['src'].value }
       assert_equal test_images.reverse.map(&:url), img_tag_srcs
     end

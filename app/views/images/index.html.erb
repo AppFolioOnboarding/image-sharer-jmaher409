@@ -1,28 +1,20 @@
 <h1>Image Library</h1>
 
-<%= link_to 'New image', new_image_path %>
+<%= render partial: "flash" %>
 
-<table border="1">
+<div>
+  <%= link_to 'New Image', new_image_path %>
+</div>
+
+<div>
+  <%= link_to 'Clear Tag Filter', images_path, id: 'clear_tag_filter_link' %>
+</div>
+
+<table id="image_index_table" border="1">
   <tr>
     <th>Image</th>
     <th>Show</th>
     <th>Tags</th>
   </tr>
-  <% @view_model.images.each do |image| %>
-    <tr>
-      <td><%= image_tag(image.url, class: 'index_image') %></td>
-      <td>
-        <%= link_to 'Show image', image_path(image) %>
-      </td>
-      <td>
-        <ul class="tag_list">
-          <% @view_model.image_tags(image).each_with_index do |tag, index| %>
-            <li id="tag_<%= index %>">
-              <%= link_to tag, "#{images_path}?tag=#{tag}"%>
-            </li>
-          <% end %>
-        </ul>
-      </td>
-    </tr>
-  <% end %>
+  <%= render partial: "image_card", collection: @view_model.images, as: :image %>
 </table>

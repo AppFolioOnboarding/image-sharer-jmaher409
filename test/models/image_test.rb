@@ -1,5 +1,6 @@
 require 'test_helper'
 
+INVALID_URL_MESSAGE = 'must be a valid URL'.freeze
 class ImageTest < ActiveSupport::TestCase
   test 'should save a valid image url' do
     assert Image.new(url: 'https://www.image.com/').valid?
@@ -8,13 +9,13 @@ class ImageTest < ActiveSupport::TestCase
   test 'should not save an invalid image url' do
     image = Image.new(url: 'foo')
     assert_not image.valid?
-    assert_equal ['is not a valid URL'], image.errors.messages[:url]
+    assert_equal [INVALID_URL_MESSAGE], image.errors.messages[:url]
   end
 
   test 'should not save on a blank image url' do
     image = Image.new(url: '')
     assert_not image.valid?
-    assert_equal ['is not a valid URL'], image.errors.messages[:url]
+    assert_equal [INVALID_URL_MESSAGE], image.errors.messages[:url]
   end
 
   test 'tag_list for image should be empty if no tags were added' do
@@ -28,4 +29,3 @@ class ImageTest < ActiveSupport::TestCase
     assert_equal %w[foo bar], image.tag_list
   end
 end
-

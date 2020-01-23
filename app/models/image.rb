@@ -3,5 +3,5 @@ class Image < ApplicationRecord
 
   acts_as_taggable
 
-  validates_url :url, url: true
+  validates_url :url, url: true, message: 'must be a valid URL'
 end

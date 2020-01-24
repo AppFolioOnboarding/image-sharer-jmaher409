@@ -1,14 +1,14 @@
 class ImagesView
-  def initialize(tag)
-    @tag = tag
+  def initialize(selected_tag)
+    @selected_tag = selected_tag
   end
 
-  def tags
-    ActsAsTaggableOn::Tag.all
+  def image_tags(image)
+    image.tag_list
   end
 
   def images
-    images = @tag.nil? ? Image.all : Image.tagged_with(@tag)
-    images.sort_by(&:created_at).reverse!.map(&:url)
+    images = @selected_tag.nil? ? Image.all : Image.tagged_with(@selected_tag)
+    images.sort_by(&:created_at).reverse
   end
 end
